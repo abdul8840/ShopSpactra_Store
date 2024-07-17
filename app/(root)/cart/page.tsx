@@ -27,30 +27,20 @@ const Cart = () => {
   const handleCheckout = async () => {
     try {
       if (!user) {
-        router.push("/sign-in");
-        return;
+        router.push("sign-in");
+      } else {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
+          method: "POST",
+          body: JSON.stringify({ cartItems: cart.cartItems, customer }),
+        });
+        const data = await res.json();
+        window.location.href = data.url;
+        console.log(data);
       }
-  
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cartItems: cart.cartItems, customer }),
-      });
-  
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Something went wrong');
-      }
-  
-      const data = await res.json();
-      window.location.href = data.url;
     } catch (err) {
-      console.error("[checkout_POST]", err);
+      console.log("[checkout_POST]", err);
     }
   };
-  
 
   return (
     <div className="flex gap-20 py-16 px-10 max-lg:flex-col max-sm:px-3">
@@ -62,8 +52,8 @@ const Cart = () => {
           <p className="text-body-bold">No item in cart</p>
         ) : (
           <div>
-            {cart.cartItems.map((cartItem) => (
-              <div key={cartItem.item._id} className="w-full flex max-sm:flex-col max-sm:gap-3 hover:bg-grey-1 px-4 py-3 items-center max-sm:items-start justify-between">
+            {cart.cartItems.map((cartItem, index) => (
+              <div key={index} className="w-full flex max-sm:flex-col max-sm:gap-3 hover:bg-grey-1 px-4 py-3 items-center max-sm:items-start justify-between">
                 <div className="flex items-center">
                   <Image
                     src={cartItem.item.media[0]}
