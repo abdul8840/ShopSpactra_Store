@@ -48,6 +48,7 @@ const Wishlist = () => {
     if (signedInUser) {
       getWishlistProducts()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signedInUser])
 
   const updateSignedInUser = (updatedUser: UserType) => {
